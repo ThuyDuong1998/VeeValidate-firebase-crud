@@ -53,24 +53,40 @@
                                 </ValidationProvider>
                             </td>
                         </tr>
-                        <!-- <router-view></router-view> -->
                     </tbody>
                 </table>
                 <div class="form-add">
                     <span> ADD </span>
                     <button type="button" class="btn btn-danger" @click="addRow">+</button>
                 </div>
-                <div class="form-add" v-for="(item, index) in subtask" :key="index">
-                    <input type="text" class="form-control" placeholder="Name" v-model="item.fullName" />
-                    <input class="form-control" type="date" v-model="item.date" />
-                    <button type="button" class="btn btn-primary" @click="removeRow">-</button>
+                <div class="form-add-content" v-for="(item, index) in subtask" :key="index">
+                    <ValidationProvider rules="required|alpha_dash" v-slot="{ classes, errors }" name="Name">
+                        <div :class="classes">
+                            <input type="text" class="form-control" placeholder="Name" v-model="item.fullName"/>
+                            <span>
+                                {{ errors[0] }}
+                            </span>
+                        </div>
+                    </ValidationProvider>
+                    <ValidationProvider rules="required|alpha_dash" v-slot="{ classes, errors }">
+                        <div :class="classes">
+                            <input class="form-control" type="date" v-model="item.date" />
+                            <span>
+                                {{ errors[0] }}
+                            </span>
+                        </div>
+                    </ValidationProvider>
+                    <ValidationProvider>
+                        <button type="button" class="btn btn-primary" @click="removeRow">-</button>
+                    </ValidationProvider>
                 </div>
 
-                <div style="display: flex; justify-content: center; margin-top: 40px">
+                <div style="text-align:center">
                     <button type="submit" class="btn btn-primary">
                         Save
                     </button>
                 </div>
+                {{findIDMax}}
             </form>
         </ValidationObserver>
     </div>
@@ -96,15 +112,14 @@ export default {
         };
     },
     computed: {
-        ...mapGetters({ todos: 'list/listTodo' }),
+        ...mapGetters({ todos: 'list/listTodo',edit: 'list/itemEdit', listSub: 'list/listSub' }),
         findIDMax() {
             const newID = Math.max.apply(
                 Math,
-                this.todos.map((item) => item.id === this.todos.id)
+                this.todos.map((item) => item.todo.id)
             );
             return this.todos.length ? newID : 0;
         },
-        ...mapGetters({ edit: 'list/itemEdit', listSub: 'list/listSub' })
     },
     methods: {
         clearInput() {
@@ -113,14 +128,17 @@ export default {
         onSubmit() {
             if (!this.list.id) {
                 this.list.id = this.findIDMax + 1;
-                this.$store.dispatch('list/addTodo', {
-                    todos: { ...this.list },
+                this.$store.commit('list/addTodo', {
+                    todo: {...this.list },
                     subtask: [...this.subtask],
                 });
                 this.clearInput();
                 this.$router.push('/home');
             } else {
-                this.$store.dispatch('list/updateTodo', {...this.list});
+                this.$store.commit('list/updateTodo', {
+                    todo: { ...this.list },
+                    subtask: [...this.subtask],
+                });
                 this.clearInput();
                 this.$router.push('/home');
             }
@@ -137,8 +155,8 @@ export default {
     },
     mounted() {
         if (this.$route.name === 'edit') {
-            this.list = { ...this.edit }
-            this.subtask = [...this.listSub]
+            this.list = { ...this.edit };
+            this.subtask = [...this.listSub];
         }
     },
 };

@@ -9,6 +9,7 @@ export default {
     deleteTodo(state, payload) {
         const findID = state.listTodo.findIndex(item => item.id === payload)
         state.listTodo.splice(findID,1)
+        localStorage.setItem('listTodo', JSON.stringify(state.listTodo));
     },
     editTodo(state, payload) {
         state.itemEdit = {...payload.listBig}
@@ -16,7 +17,8 @@ export default {
         console.log(payload.listSmall)
     },
     updateTodo(state, payload) {
-        const findID = state.listTodo.findIndex(item => item.id === payload.id)
+        console.log(payload)
+        const findID = state.listTodo.findIndex(item => item.todos.id === payload.todos.id)
         const itemUpdate = [...state.listTodo]
         itemUpdate[findID] = {...payload}
         state.listTodo= [...itemUpdate]

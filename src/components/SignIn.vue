@@ -56,7 +56,11 @@ export default {
                 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyB7k2fVv7SYXi0NhtLTdSWCcghlWSaVDNQ',
                 this.login
             );
-            localStorage.setItem('login', sign.data.idToken);
+            localStorage.setItem('login', JSON.stringify({
+                token:sign.data.idToken,
+                userName: sign.data.email.split('@gmail.com')[0]
+            })
+            );
             this.$router.push('/home');
         },
     },

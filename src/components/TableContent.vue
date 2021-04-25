@@ -1,10 +1,10 @@
 <template>
     <tr>
-        <td>{{ item.todos.id }}</td>
-        <td>{{ item.todos.name }}</td>
-        <td>{{ item.todos.description }}</td>
-        <td>{{ item.todos.due_date }}</td>
-        <td>{{ item.todos.status }}</td>
+        <td>{{ item.todo.id }}</td>
+        <td>{{ item.todo.name }}</td>
+        <td>{{ item.todo.description }}</td>
+        <td>{{ item.todo.due_date }}</td>
+        <td>{{ item.todo.status }}</td>
         <td>
             <button class="btn-del" @click="clickDel">Delete</button>
         </td>
@@ -26,7 +26,7 @@ export default {
         clickDel() {
             const del = confirm('Do you want delete?')
             if(del){
-                this.$store.dispatch('list/deleteTodo', this.item.todos.id)
+                this.$store.dispatch('list/deleteTodo', this.item.todo.id)
             }
         },
         clickEdit(){
