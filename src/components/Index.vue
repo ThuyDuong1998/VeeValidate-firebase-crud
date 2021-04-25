@@ -1,6 +1,8 @@
 <template>
     <div>
-        <div class="login_top">
+        <div class="container login_top">
+            <span>Welcome: {{userName}}</span>
+            <button type="button" class="btn btn-dark" @click="signOut">Sign Out</button>
         </div>
         <div class="topnav" id="myTopnav">
             <a href="#home" class="active">Home</a>
@@ -15,7 +17,7 @@
             <h1 style="text-align: center">TABLE</h1>
             <div style="display: flex; justify-content: flex-end;">
                 <router-link to="/add">
-                    <button type="button" class="btn btn-light">
+                    <button type="button" class="btn btn-dark">
                         Add
                     </button>
                 </router-link>
@@ -44,26 +46,37 @@
 </template>
 
 <script>
-import TableContent from './TableContent'
-import {mapGetters} from 'vuex'
+import TableContent from './TableContent';
+import { mapGetters } from 'vuex';
 export default {
     components: {
         TableContent,
     },
     computed: {
-        ...mapGetters({todos: 'list/listTodo'})
+        ...mapGetters({ todos: 'list/listTodo' }),
+        userName() {
+            const login = JSON.parse(localStorage.getItem('login')) ;
+            return login.userName
+        },
     },
-    mounted(){
-        this.$store.dispatch('list/getTodoList')
-    }
+    methods: {
+        signOut() {
+            localStorage.removeItem('login');
+            this.$router.push('/');
+        },
+    },
+    mounted() {
+        this.$store.dispatch('list/getTodoList');
+    },
 };
 </script>
 
 <style scoped>
 .login_top {
     display: flex;
-    justify-content: flex-end;
-    margin: 10px;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    margin-top: 10px;
 }
 .login_top a {
     margin-right: 10px;
